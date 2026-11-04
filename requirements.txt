@@ -1,0 +1,30 @@
+# ==============================================================================
+# LegalEase - AI-Powered Indian Legal Awareness Chatbot
+# Dependencies Specification (Phase 12 Production Release)
+# ==============================================================================
+
+# Core Web Framework & REST API
+Flask>=3.0.0,<4.0.0
+flask-cors>=4.0.0
+
+# Production WSGI Application Servers
+waitress>=3.0.0      # Production server for Windows / Cross-platform
+gunicorn>=21.2.0     # Production server for Linux / Container deployments
+
+# Database & ORM
+SQLAlchemy>=2.0.0
+
+# Official Google Gen AI SDK for Python (Gemini 2.5 Flash / Gemini 1.5 Flash)
+google-genai>=1.0.0
+
+# Natural Language Processing & Machine Learning
+scikit-learn>=1.3.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# HTTP Client & Environment Configuration
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Automated Testing
+pytest>=8.0.0

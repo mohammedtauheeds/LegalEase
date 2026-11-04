@@ -1,0 +1,52 @@
+# ==============================================================================
+# LegalEase - Git Ignore Configuration
+# Protects sensitive keys, local virtual environments, and temporary caches.
+# ==============================================================================
+
+# Environment variable files containing sensitive API keys
+.env
+.env.local
+*.env
+*.pem
+*.key
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# SQLite Database & Instance files
+instance/*.db
+instance/*.sqlite
+instance/*.sqlite3
+*.db
+*.sqlite
+*.sqlite3
+
+# Test caches & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs & Temporary files
+*.log
+tmp/
+temp/
+
+# IDE & OS-specific files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini

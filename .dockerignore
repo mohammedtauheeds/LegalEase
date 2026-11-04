@@ -1,0 +1,40 @@
+# ==============================================================================
+# LegalEase - Docker Ignore Configuration
+# Prevents sensitive files, local databases, and caches from entering containers
+# ==============================================================================
+
+# Git metadata
+.git
+.gitignore
+
+# Environment files and credentials (CRITICAL: Never bake secrets into image)
+.env
+*.env
+*.pem
+*.key
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local databases and runtime state
+instance/*.db
+instance/*.sqlite
+instance/*.sqlite3
+instance/benchmark_test.db
+instance/test_*.db
+
+# Temporary and benchmark files
+*.log
+scratch/
+tmp/
+temp/
+
+# Virtual environments
+venv/
+.venv/
+env/

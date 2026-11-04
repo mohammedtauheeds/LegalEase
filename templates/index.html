@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="LegalEase — AI-Powered Indian Legal Awareness Chatbot. Understand your legal rights, Indian laws, cybercrime procedures, and citizen protections in simple English.">
+  <meta name="theme-color" content="#0a0e17">
+  <title>LegalEase — AI-Powered Indian Legal Awareness Assistant</title>
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Bootstrap Icons 1.11.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Custom Futuristic Dark Theme CSS -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Root Application Layout -->
+  <div class="app-layout">
+
+    <!-- Mobile Top Navigation Bar -->
+    <header class="mobile-header d-lg-none" role="banner">
+      <button class="btn btn-icon" id="mobileMenuBtn" aria-label="Toggle Navigation Menu">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+      <div class="mobile-brand">
+        <div class="brand-icon-sm">
+          <i class="bi bi-shield-shaded"></i>
+        </div>
+        <span class="brand-title">LegalEase</span>
+      </div>
+      <button class="btn btn-icon" id="mobileNewChatBtn" aria-label="Start New Chat">
+        <i class="bi bi-pencil-square fs-5"></i>
+      </button>
+    </header>
+
+    <!-- Sidebar Backdrop for Mobile -->
+    <div class="sidebar-backdrop d-lg-none" id="sidebarBackdrop"></div>
+
+    <!-- Sidebar / Conversation History Drawer -->
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Sidebar Navigation">
+      <!-- Sidebar Header / Branding -->
+      <div class="sidebar-header">
+        <div class="brand-wrapper">
+          <div class="brand-logo-glow">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <div class="brand-info">
+            <h1 class="brand-name">LegalEase</h1>
+            <span class="brand-subtitle">AI Legal Awareness Assistant</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button: Start New Chat -->
+      <div class="sidebar-actions">
+        <button class="btn btn-new-chat w-100" id="btnNewChat" aria-label="Start Fresh Conversation">
+          <i class="bi bi-plus-lg me-2"></i>
+          <span>New Chat</span>
+        </button>
+      </div>
+
+      <!-- Conversation History Container -->
+      <div class="sidebar-section-title">
+        <span>Recent Conversations</span>
+        <button class="btn-icon-subtle" id="btnRefreshHistory" title="Refresh conversation list" aria-label="Refresh conversation list">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+
+      <div class="conversation-list-container" id="conversationListContainer" role="region" aria-label="Past Conversations">
+        <!-- Dynamic list populated via JS -->
+        <div class="conversation-list" id="conversationList">
+          <div class="conv-skeleton">
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line short"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <!-- Backend Health Status Pill -->
+        <div class="status-indicator-pill" id="systemStatusPill" title="Backend API Health">
+          <span class="status-dot online" id="statusDot"></span>
+          <span class="status-text" id="statusText">System Online</span>
+        </div>
+
+        <!-- About LegalEase Button -->
+        <button class="btn btn-about w-100" id="btnAboutModal" data-bs-toggle="modal" data-bs-target="#aboutModal">
+          <i class="bi bi-info-circle me-2"></i>
+          <span>About LegalEase</span>
+        </button>
+
+        <!-- Compact Disclaimer Badge -->
+        <div class="sidebar-disclaimer-badge">
+          <i class="bi bi-shield-exclamation me-1"></i>
+          <span>General legal awareness only &bull; Not legal advice</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Work Area -->
+    <main class="chat-main" id="chatMain" role="main">
+      
+      <!-- Top Chat Panel Navbar (Desktop / Tablet) -->
+      <header class="chat-header">
+        <div class="chat-header-info">
+          <div class="active-chat-indicator">
+            <i class="bi bi-chat-left-text-fill text-accent me-2"></i>
+            <span class="active-chat-title" id="activeChatTitle">New Legal Query</span>
+          </div>
+          <span class="session-badge" id="sessionBadge">Active Session</span>
+        </div>
+
+        <div class="chat-header-actions">
+          <button class="btn btn-header-action" id="btnClearChat" title="Reset Current View" aria-label="Reset Chat View">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>
+            <span class="d-none d-sm-inline">Reset View</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Chat Body / Scroll Area -->
+      <div class="chat-body" id="chatBody">
+
+        <!-- Welcome Hero Screen (Shown when no conversation is active) -->
+        <section class="welcome-screen" id="welcomeScreen" aria-label="Welcome to LegalEase">
+          <div class="welcome-hero-content text-center">
+            <div class="welcome-emblem">
+              <div class="emblem-inner">
+                <i class="bi bi-balance-scale"></i>
+              </div>
+              <div class="emblem-glow"></div>
+            </div>
+
+            <h2 class="welcome-title">Understand Your Rights. Know the Law.</h2>
+            <p class="welcome-subtitle">Your AI-powered guide to Indian legal awareness, citizen rights, and procedures in clear, everyday English.</p>
+
+            <div class="emergency-helpline-ribbon">
+              <span class="ribbon-title"><i class="bi bi-telephone-fill me-1"></i> National Helplines:</span>
+              <span class="ribbon-item">Emergency: <strong>112</strong></span>
+              <span class="ribbon-divider">&bull;</span>
+              <span class="ribbon-item">Cyber Fraud: <strong>1930</strong></span>
+              <span class="ribbon-divider">&bull;</span>
+              <span class="ribbon-item">Consumer Helpline: <strong>1915</strong></span>
+              <span class="ribbon-divider">&bull;</span>
+              <span class="ribbon-item">Legal Aid: <strong>15100</strong></span>
+            </div>
+          </div>
+
+          <!-- Suggested Prompt Cards Grid (6 Prompts) -->
+          <div class="welcome-prompts-section">
+            <h3 class="prompts-heading">Frequently Asked Legal Queries</h3>
+            <div class="prompts-grid">
+
+              <!-- Prompt 1: Fundamental Rights -->
+              <article class="prompt-card" data-prompt="What are my Fundamental Rights under the Indian Constitution?" tabindex="0" role="button">
+                <div class="prompt-icon icon-cyan">
+                  <i class="bi bi-bank2"></i>
+                </div>
+                <div class="prompt-details">
+                  <h4 class="prompt-question">What are my Fundamental Rights under the Indian Constitution?</h4>
+                  <span class="prompt-meta">Part III of Constitution • Articles 12–35</span>
+                </div>
+                <i class="bi bi-arrow-up-right prompt-arrow"></i>
+              </article>
+
+              <!-- Prompt 2: Cyber Fraud -->
+              <article class="prompt-card" data-prompt="How do I report online financial fraud?" tabindex="0" role="button">
+                <div class="prompt-icon icon-blue">
+                  <i class="bi bi-shield-lock-fill"></i>
+                </div>
+                <div class="prompt-details">
+                  <h4 class="prompt-question">How do I report online financial fraud?</h4>
+                  <span class="prompt-meta">Cybercrime Helpline 1930 • Golden Hour Reporting</span>
+                </div>
+                <i class="bi bi-arrow-up-right prompt-arrow"></i>
+              </article>
+
+              <!-- Prompt 3: Consumer Complaint -->
+              <article class="prompt-card" data-prompt="How can I file a consumer complaint?" tabindex="0" role="button">
+                <div class="prompt-icon icon-purple">
+                  <i class="bi bi-bag-check-fill"></i>
+                </div>
+                <div class="prompt-details">
+                  <h4 class="prompt-question">How can I file a consumer complaint?</h4>
+                  <span class="prompt-meta">Consumer Protection Act 2019 • e-Daakhil Portal</span>
+                </div>
+                <i class="bi bi-arrow-up-right prompt-arrow"></i>
+              </article>
+
+              <!-- Prompt 4: Women's Legal Rights -->
+              <article class="prompt-card" data-prompt="What legal protections are available to women?" tabindex="0" role="button">
+                <div class="prompt-icon icon-pink">
+                  <i class="bi bi-gender-female"></i>
+                </div>
+                <div class="prompt-details">
+                  <h4 class="prompt-question">What legal protections are available to women?</h4>
+                  <span class="prompt-meta">Domestic Violence Act • Zero FIR • POSH Act</span>
+                </div>
+                <i class="bi bi-arrow-up-right prompt-arrow"></i>
+              </article>
+
+              <!-- Prompt 5: FIR Filing -->
+              <article class="prompt-card" data-prompt="How do I file an FIR in India?" tabindex="0" role="button">
+                <div class="prompt-icon icon-indigo">
+                  <i class="bi bi-file-earmark-ruled-fill"></i>
+                </div>
+                <div class="prompt-details">
+                  <h4 class="prompt-question">How do I file an FIR in India?</h4>
+                  <span class="prompt-meta">BNSS Section 173 / CrPC 154 • Free Copy Rights</span>
+                </div>
+                <i class="bi bi-arrow-up-right prompt-arrow"></i>
+              </article>
+
+              <!-- Prompt 6: Tenant Rights -->
+              <article class="prompt-card" data-prompt="What are my rights as a tenant?" tabindex="0" role="button">
+                <div class="prompt-icon icon-teal">
+                  <i class="bi bi-house-door-fill"></i>
+                </div>
+                <div class="prompt-details">
+                  <h4 class="prompt-question">What are my rights as a tenant?</h4>
+                  <span class="prompt-meta">Model Tenancy Act • Security Deposit & Notice</span>
+                </div>
+                <i class="bi bi-arrow-up-right prompt-arrow"></i>
+              </article>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Message Feed (Dynamic Container for Chat Turn Bubbles) -->
+        <div class="messages-container d-none" id="messagesContainer" role="log" aria-live="polite">
+          <!-- Messages will be injected here via static/js/app.js -->
+        </div>
+
+        <!-- Assistant Typing Indicator -->
+        <div class="typing-indicator-row d-none" id="typingIndicator">
+          <div class="assistant-avatar">
+            <i class="bi bi-shield-shaded"></i>
+          </div>
+          <div class="typing-bubble">
+            <span class="typing-label">Analyzing Indian legal provisions</span>
+            <div class="typing-dots">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Chat Input Area (Fixed at panel bottom) -->
+      <footer class="chat-input-area" role="region" aria-label="Message Input">
+        <div class="input-card">
+          <div class="input-row">
+            <textarea
+              id="userInput"
+              class="chat-textarea"
+              placeholder="Ask a question about Indian law, citizen rights, or procedures..."
+              rows="1"
+              maxlength="1000"
+              aria-label="User Legal Question Input"
+            ></textarea>
+            
+            <button class="btn btn-send" id="btnSend" disabled aria-label="Send Message" title="Send question (Enter)">
+              <i class="bi bi-arrow-up-short fs-4"></i>
+            </button>
+          </div>
+
+          <div class="input-meta-row">
+            <div class="input-helper-text">
+              <i class="bi bi-shield-lock me-1"></i>
+              <span>Press <kbd>Enter</kbd> to send, <kbd>Shift + Enter</kbd> for new line</span>
+            </div>
+            <div class="char-counter" id="charCounter">0 / 1000</div>
+          </div>
+        </div>
+
+        <!-- Static Legal Disclaimer Note -->
+        <div class="input-disclaimer-note text-center">
+          <span>LegalEase provides general legal awareness and educational information under Indian law, not professional legal advice or advocate representation.</span>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. About LegalEase Modal -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0 pb-0">
+          <div class="d-flex align-items-center">
+            <div class="brand-logo-glow me-3">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <div>
+              <h2 class="modal-title fs-5 mb-0" id="aboutModalLabel">LegalEase</h2>
+              <span class="text-accent small">AI-Powered Indian Legal Awareness Assistant</span>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body pt-3">
+          <p class="modal-intro">
+            <strong>LegalEase</strong> is an intelligent legal awareness platform designed to make Indian laws, fundamental constitutional rights, citizen safeguards, and common legal procedures clear and understandable to everyone without complicated legal jargon.
+          </p>
+
+          <div class="row g-3 my-2">
+            <div class="col-md-6">
+              <div class="info-stat-card">
+                <i class="bi bi-journal-bookmark-fill text-accent mb-2 fs-4"></i>
+                <h3 class="fs-6 fw-bold mb-1">20 Core Legal Domains</h3>
+                <p class="small text-secondary mb-0">Covers Constitutional Rights, Cybercrime, Consumer Protection, Women's Rights, Tenant Laws, FIR Procedures, and BNS/BNSS/BSA criminal law transitions.</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info-stat-card">
+                <i class="bi bi-cpu-fill text-accent mb-2 fs-4"></i>
+                <h3 class="fs-6 fw-bold mb-1">Hybrid RAG Architecture</h3>
+                <p class="small text-secondary mb-0">Combines verified statutory FAQ matching, statutory provisions retrieval, and Google Gemini AI generation with strict zero-hallucination guardrails.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="disclaimer-alert mt-3 p-3">
+            <h4 class="fs-6 fw-bold text-warning mb-1">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>Legal Awareness Disclaimer
+            </h4>
+            <p class="small text-secondary mb-0">
+              The information provided by LegalEase is strictly for public awareness, education, and informational purposes. It does not constitute formal legal counsel, attorney-client representation, or judicial determination. For actionable disputes or litigation, always consult a qualified advocate or your District Legal Services Authority (DLSA).
+            </p>
+          </div>
+
+          <div class="helpline-grid mt-3">
+            <h4 class="fs-6 fw-bold mb-2">Key Indian Citizen Helplines</h4>
+            <div class="row g-2 text-center">
+              <div class="col-6 col-sm-3">
+                <div class="helpline-chip">
+                  <span class="hl-name">Emergency</span>
+                  <span class="hl-number">112</span>
+                </div>
+              </div>
+              <div class="col-6 col-sm-3">
+                <div class="helpline-chip">
+                  <span class="hl-name">Cyber Fraud</span>
+                  <span class="hl-number">1930</span>
+                </div>
+              </div>
+              <div class="col-6 col-sm-3">
+                <div class="helpline-chip">
+                  <span class="hl-name">Consumer</span>
+                  <span class="hl-number">1915</span>
+                </div>
+              </div>
+              <div class="col-6 col-sm-3">
+                <div class="helpline-chip">
+                  <span class="hl-name">Legal Aid</span>
+                  <span class="hl-number">15100</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-4 pt-2 border-top border-secondary-subtle">
+            <span class="small text-secondary">Version <strong>1.0.0</strong> &bull; Indian Legal Awareness Edition</span>
+            <span class="badge bg-secondary-subtle text-secondary px-3 py-1">2026 Legal Framework</span>
+          </div>
+        </div>
+
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Rename Conversation Modal -->
+  <div class="modal fade" id="renameModal" tabindex="-1" aria-labelledby="renameModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0 pb-0">
+          <h2 class="modal-title fs-6" id="renameModalLabel">Rename Conversation</h2>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-3">
+          <label for="renameTitleInput" class="form-label small text-secondary">Conversation Title</label>
+          <input type="text" class="form-control chat-input-field" id="renameTitleInput" maxlength="100" placeholder="Enter title...">
+          <input type="hidden" id="renameSessionId">
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-sm btn-primary px-3" id="btnConfirmRename">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0 pb-0">
+          <h2 class="modal-title fs-6 text-danger" id="deleteModalLabel">
+            <i class="bi bi-trash3 me-1"></i> Delete Chat?
+          </h2>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-3">
+          <p class="small text-secondary mb-0">Are you sure you want to permanently delete this conversation and its messages? This action cannot be undone.</p>
+          <input type="hidden" id="deleteSessionId">
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-sm btn-danger px-3" id="btnConfirmDelete">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container for Alerts -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
+    <div id="appToast" class="toast align-items-center text-bg-dark border-0 glass-toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center" id="toastMessage">
+          <i class="bi bi-info-circle me-2 text-accent" id="toastIcon"></i>
+          <span>Notification message</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5.3.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- LegalEase Frontend Logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

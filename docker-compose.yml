@@ -1,0 +1,39 @@
+version: "3.8"
+
+# ==============================================================================
+# LegalEase - Docker Compose Production Stack
+# Builds and deploys the LegalEase AI Legal Awareness chatbot container
+# ==============================================================================
+
+services:
+  legalease:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: legalease_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - HOST=0.0.0.0
+      - PORT=5000
+      - SECRET_KEY=${SECRET_KEY:-production-secret-key-change-me}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
+      - SQLALCHEMY_DATABASE_URI=sqlite:////app/instance/legalease.db
+      - NLP_SIMILARITY_THRESHOLD=${NLP_SIMILARITY_THRESHOLD:-0.60}
+      - REQUEST_TIMEOUT=${REQUEST_TIMEOUT:-10}
+    volumes:
+      # Persistent volume mount for SQLite database storage
+      - legalease_data:/app/instance
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:5000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  legalease_data:
+    driver: local
