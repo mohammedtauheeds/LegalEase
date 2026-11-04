@@ -11,6 +11,7 @@ prompt injection defense, and authoritative source attribution.
 import logging
 import re
 from typing import Tuple, Optional
+from typing import Tuple, Optional, Dict, List, Any
 
 from config import Config
 from services.source_verification import format_provision_label
